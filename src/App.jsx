@@ -61,6 +61,9 @@ function App() {
 
     return ()=>{
       socket.disconnect({roomId:room,name})
+      socket.on('roomsize',(data)=>{
+        setPeople(data)
+      })
     }
 
   },[])
