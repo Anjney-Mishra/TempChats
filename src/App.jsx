@@ -60,7 +60,7 @@ function App() {
     })
 
     return ()=>{
-      socket.disconnect()
+      socket.disconnect({roomId:room,name})
     }
 
   },[])
