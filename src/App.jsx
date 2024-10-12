@@ -17,6 +17,7 @@ function App() {
   const [hider,setHider] = useState(false);
 
   const chatContainerRef = useRef(null);
+  const inputRef = useRef(null);
 
   const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
   // const socket = useMemo(()=>io('http://localhost:3000'),[]);
@@ -34,6 +35,7 @@ function App() {
     e.preventDefault();
     socket.emit('message',{name,message,room,sid,color});
     setMessage("");
+    inputRef.current.focus();
   }
 
   const handleJoinRoom = (e)=>{
@@ -160,6 +162,7 @@ function App() {
           placeholder='Message...'
           onChange={(e) => setMessage(e.target.value)}
           value={message}
+          ref={inputRef}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
           className='border border-gray-500 p-2 text-xl rounded-lg mr-2 w-full'
         />
