@@ -1,4 +1,4 @@
-import { useEffect, useState,useMemo } from 'react'
+import { useEffect, useState,useMemo,useRef } from 'react'
 import './App.css'
 import {io} from 'socket.io-client'
 import { IoSendSharp } from "react-icons/io5";
@@ -16,8 +16,10 @@ function App() {
   const [people,setPeople] = useState(0);
   const [hider,setHider] = useState(false);
 
-  const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
-  // const socket = useMemo(()=>io('http://localhost:3000'),[]);
+  const chatContainerRef = useRef(null);
+
+  // const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
+  const socket = useMemo(()=>io('http://localhost:3000'),[]);
 
   const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -82,6 +84,13 @@ function App() {
     }
   },[])
 
+  useEffect(()=>{
+    if(chatContainerRef.current)
+    {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  },[messages])
+
 
 
 
@@ -121,7 +130,7 @@ function App() {
       )
     }
 
-    <Card className='m-2 h-[60vh] p-4 overflow-y-scroll'>
+    <Card className='m-2 h-[60vh] p-4 overflow-y-scroll hide-scrollbar' ref={chatContainerRef}>
       {
         messages.map((message, index) => {
           const isSender = message.sid === sid; // Check if the message is from the sender
