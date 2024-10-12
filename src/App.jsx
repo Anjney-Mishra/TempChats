@@ -18,8 +18,8 @@ function App() {
 
   const chatContainerRef = useRef(null);
 
-  // const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
-  const socket = useMemo(()=>io('http://localhost:3000'),[]);
+  const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
+  // const socket = useMemo(()=>io('http://localhost:3000'),[]);
 
   const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
