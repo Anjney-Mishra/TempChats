@@ -17,6 +17,7 @@ function App() {
   const [hider,setHider] = useState(false);
 
   const socket = useMemo(()=>io('https://tempchatsserver.onrender.com'),[]);
+  // const socket = useMemo(()=>io('http://localhost:3000'),[]);
 
   const generateRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -36,8 +37,20 @@ function App() {
   const handleJoinRoom = (e)=>{
     e.preventDefault();
     socket.emit('joinRoom',{roomId:room,name});
-    toast(`Joined Room: ${room}`,{icon:'✅'})
-    setHider(true)
+
+    socket.on('joinedRoom',({roomId,roomSize})=>{
+      toast(`Joined Room: ${roomId}`,{icon:'✅'})
+      setPeople(roomSize)
+      setHider(true)
+    })
+
+    socket.on('connect_error',()=>{
+      toast.error('Something went wrong unable to connect to server');
+      setHider(false)
+    })
+    socket.on('disconnect', () => {
+      toast.error('Disconnected from the server.');
+    });
   }
 
   useEffect(()=>{
@@ -51,6 +64,12 @@ function App() {
       toast(`${data.name} Joined the Room`,{icon:'👋'})
     })
 
+    socket.on('UserLeft',({leftname,roomSize})=>{
+      console.log(leftname,roomSize)
+      toast(`${leftname} Left the Room`,{icon:'👋'});
+      setPeople(roomSize);
+    })
+
     socket.on('roomsize',(data)=>{
       setPeople(data)
     })
@@ -58,15 +77,12 @@ function App() {
     socket.on("response",(data)=>{
       setMessages((messages)=>[...messages,data])
     })
-
     return ()=>{
-      socket.disconnect({roomId:room,name})
-      socket.on('roomsize',(data)=>{
-        setPeople(data)
-      })
+      socket.disconnect();
     }
-
   },[])
+
+
 
 
   return (
